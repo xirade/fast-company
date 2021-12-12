@@ -7,66 +7,68 @@ import bookmarkOn from "./assets/bookmark_on.svg";
 import bookmarkOff from "./assets/bookmark_off.svg";
 
 export default function App() {
-  const [users, setUsers] = useState(
-    api.users.fetchAll().map((user) => {
-      return { ...user, isFavorite: false };
-    })
-  );
-
-  const handleDelete = (userId) => {
-    setUsers((prevState) => prevState.filter((user) => user._id !== userId));
-  };
-
-  const handleFavorite = (favorite, id) => {
-    setUsers((prevState) =>
-      prevState.map((state) =>
-        state._id === id
-          ? {
-              ...state,
-              isFavorite: favorite,
-            }
-          : state
-      )
+    const [users, setUsers] = useState(
+        api.users.fetchAll().map((user) => {
+            return { ...user, isFavorite: false };
+        })
     );
-  };
 
-  const renderPhrase = (number) => {
-    const text = `${number} человек тусанет с тобой сегодня`;
+    const handleDelete = (userId) => {
+        setUsers((prevState) =>
+            prevState.filter((user) => user._id !== userId)
+        );
+    };
 
-    if (!number) return "Никто с тобой не тусанет";
+    const handleFavorite = (favorite, id) => {
+        setUsers((prevState) =>
+            prevState.map((state) =>
+                state._id === id
+                    ? {
+                        ...state,
+                        isFavorite: favorite
+                    }
+                    : state
+            )
+        );
+    };
 
-    if (number > 10 && number < 20) {
-      return text;
-    }
+    const renderPhrase = (number) => {
+        const text = `${number} человек тусанет с тобой сегодня`;
 
-    if (number % 10 > 1 && number % 10 < 5) {
-      return `${number} человека тусанут с тобой сегодня`;
-    }
+        if (!number) return "Никто с тобой не тусанет";
 
-    return text;
-  };
+        if (number > 10 && number < 20) {
+            return text;
+        }
 
-  const renderBadges = (qualities) => {
-    return qualities.map((quality) => (
-      <span key={quality._id} className={`badge bg-${quality.color} m-1`}>
-        {quality.name}
-      </span>
-    ));
-  };
+        if (number % 10 > 1 && number % 10 < 5) {
+            return `${number} человека тусанут с тобой сегодня`;
+        }
 
-  const renderBookmark = (favorite) => {
-    const bookmark = favorite ? bookmarkOn : bookmarkOff;
-    return <img src={bookmark} alt="bookmark" />;
-  };
+        return text;
+    };
 
-  return (
-    <Users
-      users={users}
-      onFavorite={handleFavorite}
-      onDelete={handleDelete}
-      renderPhrase={renderPhrase}
-      renderBadges={renderBadges}
-      renderBookmark={renderBookmark}
-    />
-  );
+    const renderBadges = (qualities) => {
+        return qualities.map((quality) => (
+            <span key={quality._id} className={`badge bg-${quality.color} m-1`}>
+                {quality.name}
+            </span>
+        ));
+    };
+
+    const renderBookmark = (favorite) => {
+        const bookmark = favorite ? bookmarkOn : bookmarkOff;
+        return <img src={bookmark} alt="bookmark" />;
+    };
+
+    return (
+        <Users
+            users={users}
+            onFavorite={handleFavorite}
+            onDelete={handleDelete}
+            renderPhrase={renderPhrase}
+            renderBadges={renderBadges}
+            renderBookmark={renderBookmark}
+        />
+    );
 }
