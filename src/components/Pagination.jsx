@@ -19,7 +19,9 @@ export default function Pagination({
                             <li
                                 key={page}
                                 className={`page-item${
-                                    page === currentPage ? " active" : ""
+                                    page === currentPage
+                                        ? " active"
+                                        : ""
                                 }`}
                             >
                                 <button

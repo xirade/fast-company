@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Users from "./components/Users";
 import api from "./api/index";
 
@@ -7,11 +7,17 @@ import bookmarkOn from "./assets/bookmark_on.svg";
 import bookmarkOff from "./assets/bookmark_off.svg";
 
 export default function App() {
-    const [users, setUsers] = useState(
-        api.users.fetchAll().map((user) => {
-            return { ...user, isFavorite: false };
-        })
-    );
+    const [users, setUsers] = useState();
+
+    useEffect(() => {
+        api.users.fetchAll().then((data) =>
+            setUsers(
+                data.map((user) => {
+                    return { ...user, isFavorite: false };
+                })
+            )
+        );
+    }, []);
 
     const handleDelete = (userId) => {
         setUsers((prevState) =>
@@ -57,18 +63,22 @@ export default function App() {
     };
 
     const renderBookmark = (favorite) => {
-        const bookmark = favorite ? bookmarkOn : bookmarkOff;
+        const bookmark = favorite
+            ? bookmarkOn
+            : bookmarkOff;
         return <img src={bookmark} alt="bookmark" />;
     };
 
     return (
-        <Users
-            users={users}
-            onFavorite={handleFavorite}
-            onDelete={handleDelete}
-            renderPhrase={renderPhrase}
-            renderBadges={renderBadges}
-            renderBookmark={renderBookmark}
-        />
+        Array.isArray(users) && (
+            <Users
+                users={users}
+                onFavorite={handleFavorite}
+                onDelete={handleDelete}
+                renderPhrase={renderPhrase}
+                renderBadges={renderBadges}
+                renderBookmark={renderBookmark}
+            />
+        )
     );
 }
