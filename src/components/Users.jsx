@@ -52,21 +52,19 @@ export default function Users({ users, renderPhrase, ...props }) {
             {professions
                 ? (
                     <>
-                        {Array.isArray(professions) && (
-                            <div className="d-flex flex-column p-3">
-                                <GroupList
-                                    selectedItem={selectedProf}
-                                    items={professions}
-                                    onItemSelect={handleProfessionSelect}
-                                />
-                                <button
-                                    className="btn btn-secondary mt-2"
-                                    onClick={() => clearFilter()}
-                                >
-                                    Очистить
-                                </button>
-                            </div>
-                        )}
+                        <div className="d-flex flex-column p-3">
+                            <GroupList
+                                selectedItem={selectedProf}
+                                items={professions}
+                                onItemSelect={handleProfessionSelect}
+                            />
+                            <button
+                                className="btn btn-secondary mt-2"
+                                onClick={() => clearFilter()}
+                            >
+                                Очистить
+                            </button>
+                        </div>
                         <div className="d-flex flex-column flex-fill">
                             <SearchStatus phrase={renderPhrase} length={count} />
                             <div className="d-flex flex-column">

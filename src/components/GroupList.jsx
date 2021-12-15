@@ -10,18 +10,18 @@ export default function GroupList({
 }) {
     return (
         <ul className="list-group mt-2">
-            {items.map((item) => (
+            {Object.keys({ ...items }).map((item) => (
                 <li
                     role="button"
-                    key={item[valueProp]}
+                    key={items[item][valueProp]}
                     className={`list-group-item ${
-                        item === selectedItem
+                        items[item] === selectedItem
                             ? "active"
                             : ""
                     }`}
-                    onClick={() => onItemSelect(item)}
+                    onClick={() => onItemSelect(items[item])}
                 >
-                    {item[contentProp]}
+                    {items[item][contentProp]}
                 </li>
             ))}
         </ul>
