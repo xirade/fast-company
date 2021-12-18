@@ -7,6 +7,8 @@ import Bookmark from "./Bookmark";
 // caret icons
 import caretUp from "../assets/arrow_drop_up.svg";
 import caretDown from "../assets/arrow_drop_down.svg";
+import QualitiesList from "./QualitiesList";
+import Table from "./Table";
 
 export default function UsersTable({
     users,
@@ -15,11 +17,19 @@ export default function UsersTable({
     selectedSort,
     renderBookmark,
     onDelete,
-    ...props
+    renderBadges
 }) {
     const columns = {
         name: { path: "name", name: "Имя" },
-        qualities: { name: "Качества" },
+        qualities: {
+            name: "Качества",
+            component: (user) => (
+                <QualitiesList
+                    {...{ renderBadges }}
+                    qualities={user.qualities}
+                />
+            )
+        },
         professions: { path: "profession.name", name: "Профессия" },
         completedMeetings: {
             path: "completedMeetings",
@@ -60,13 +70,13 @@ export default function UsersTable({
     };
 
     return (
-        <table className="table mt-2">
+        <Table className="table mt-2">
             <TableHeader
                 {...{ onSort, selectedSort, renderCaret }}
                 columns={columns}
             />
             <TableBody {...{ columns, data: users }} />
-        </table>
+        </Table>
     );
 }
 
@@ -75,6 +85,7 @@ UsersTable.propTypes = {
     onSort: PropTypes.func.isRequired,
     selectedSort: PropTypes.object.isRequired,
     renderBookmark: PropTypes.func.isRequired,
+    renderBadges: PropTypes.func.isRequired,
     onDelete: PropTypes.func.isRequired,
     onFavorite: PropTypes.func.isRequired
 };

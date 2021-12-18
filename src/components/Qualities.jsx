@@ -1,11 +1,11 @@
 import React from "react";
 import PropTypes from "prop-types";
 
-export default function Qualities({ qualities, badges }) {
-    return <>{badges(qualities)}</>;
+export default function Qualities({ qual, renderBadges }) {
+    return <>{renderBadges(qual)}</>;
 }
 
 Qualities.propTypes = {
-    qualities: PropTypes.array.isRequired,
-    badges: PropTypes.func.isRequired
+    qual: PropTypes.object.isRequired,
+    renderBadges: PropTypes.func.isRequired
 };
