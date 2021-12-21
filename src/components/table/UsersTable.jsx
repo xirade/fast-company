@@ -2,12 +2,12 @@ import React from "react";
 import PropTypes from "prop-types";
 import TableHeader from "./TableHeader";
 import TableBody from "./TableBody";
-import Bookmark from "./Bookmark";
+import Bookmark from "../bookmark/Bookmark";
 
 // caret icons
-import caretUp from "../assets/arrow_drop_up.svg";
-import caretDown from "../assets/arrow_drop_down.svg";
-import QualitiesList from "./QualitiesList";
+import caretUp from "../../assets/arrow_drop_up.svg";
+import caretDown from "../../assets/arrow_drop_down.svg";
+import QualitiesList from "../list/QualitiesList";
 import Table from "./Table";
 
 export default function UsersTable({

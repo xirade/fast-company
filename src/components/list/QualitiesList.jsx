@@ -1,5 +1,5 @@
 import React from "react";
-import Qualities from "./Qualities";
+import Qualities from "../qualities/Qualities";
 import PropTypes from "prop-types";
 
 export default function QualitiesList({ qualities, renderBadges }) {
