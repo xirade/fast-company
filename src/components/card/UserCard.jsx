@@ -1,6 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
+import PropTypes from "prop-types";
+
+// api
 import api from "../../api/index";
+
+// components
 import QualitiesList from "../list/QualitiesList";
 import Loader from "../loader/Loader";
 
@@ -57,3 +62,8 @@ export default function UserCard({ id, renderBadges }) {
 
     return <Loader />;
 }
+
+UserCard.propTypes = {
+    id: PropTypes.string.isRequired,
+    renderBadges: PropTypes.func.isRequired
+};

@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React from "react";
 import { useHistory } from "react-router-dom";
 import PropType from "prop-types";
 import { get } from "lodash";
@@ -21,7 +21,10 @@ export default function TableBody({ data, columns }) {
         return get(item, columns[column].path);
     };
 
-    const handleUser = (id) => {
+    const handleUser = (id) => (e) => {
+        if (e.target.closest(".btn")) {
+            return false;
+        }
         history.push(`/users/${id}`);
     };
 
@@ -30,11 +33,7 @@ export default function TableBody({ data, columns }) {
             {data.map((item) => (
                 <CSSTransition timeout={200} classNames="item" key={item.name}>
                     <tr
-                        onClick={(e) => {
-                            e.target.closest(".btn")
-                                ? false
-                                : handleUser(item._id);
-                        }}
+                        onClick={handleUser(item._id)}
                         role="button"
                         style={{ height: "60px" }}
                     >

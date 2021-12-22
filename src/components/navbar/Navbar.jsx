@@ -2,7 +2,7 @@ import { NavLink } from "react-router-dom";
 import React from "react";
 
 // styles
-import "./Navbar.css"
+import "./Navbar.css";
 
 export default function Navbar() {
     return (
@@ -12,13 +12,28 @@ export default function Navbar() {
         >
             <ul className="nav gap-4">
                 <li>
-                    <NavLink className="p-3 d-block text-decoration-none text-black" to="/">Home</NavLink>
+                    <NavLink
+                        className="p-3 d-block text-decoration-none text-black"
+                        to="/"
+                    >
+                        Home
+                    </NavLink>
                 </li>
                 <li>
-                    <NavLink className="p-3 d-block text-decoration-none text-black" to="/login">Login</NavLink>
+                    <NavLink
+                        className="p-3 d-block text-decoration-none text-black"
+                        to="/login"
+                    >
+                        Login
+                    </NavLink>
                 </li>
                 <li>
-                    <NavLink className="p-3 d-block text-decoration-none text-black" to="/users">Users</NavLink>
+                    <NavLink
+                        className="p-3 d-block text-decoration-none text-black"
+                        to="/users"
+                    >
+                        Users
+                    </NavLink>
                 </li>
             </ul>
         </nav>
