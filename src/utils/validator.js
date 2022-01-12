@@ -1,39 +1,16 @@
 export default function validator(data, config) {
-    let errors = {};
+    const errors = {};
     const validate = (method, data, conf) => {
-        let statusValidate;
-        switch (method) {
-            case "isRequired":
-                statusValidate = data.trim() === "";
-                break;
-
-            case "isEmail":
-                const emailRegExp = /^\S+@\S+\.\S+$/g;
-                statusValidate = !emailRegExp.test(data);
-                break;
-
-            case "isCapitalSymbol":
-                const capitalRegExp = /[A-Z]+/g;
-                statusValidate = !capitalRegExp.test(data);
-                break;
-
-            case "isContainDigit":
-                const digitRegExp = /\d+/g;
-                statusValidate = !digitRegExp.test(data);
-                break;
-
-            case "min":
-                statusValidate = data.length < conf.value;
-                break;
-
-            case "max":
-                statusValidate = data.length > conf.value;
-                break;
-
-            default:
-                break;
-        }
-        if (statusValidate) {
+        const statusValidate = {
+            isRequired: () => data.trim() === "",
+            isEmail: () => !/^\S+@\S+\.\S+$/g.test(data),
+            isCapitalSymbol: () => !/[A-Z]+/g.test(data),
+            isContainDigit: () => !/\d+/g.test(data),
+            min: () => data.length < conf.value,
+            max: () => data.length > conf.value
+        };
+        const isValid = statusValidate[method]();
+        if (isValid) {
             return conf.message;
         }
     };

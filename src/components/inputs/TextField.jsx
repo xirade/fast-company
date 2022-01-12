@@ -39,7 +39,11 @@ export default function TextField({
                         type="button"
                         onClick={toggleShowPassword}
                     >
-                        <img style={{height:"20px", width:"20px"}} src={!showPassword ? Eye : SlashEye} alt="eye" />
+                        <img
+                            style={{ height: "20px", width: "20px" }}
+                            src={!showPassword ? Eye : SlashEye}
+                            alt="eye"
+                        />
                     </button>
                 )}
                 {error && <p className="invalid-feedback">{error}</p>}

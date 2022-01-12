@@ -1,3 +1,6 @@
+import React from "react";
+import PropTypes from "prop-types";
+
 export default function SearchInput({ changeHandler, searchQuery }) {
     return (
         <div className="mt-3">
@@ -11,3 +14,8 @@ export default function SearchInput({ changeHandler, searchQuery }) {
         </div>
     );
 }
+
+SearchInput.propTypes = {
+    changeHandler: PropTypes.func.isRequired,
+    searchQuery: PropTypes.string
+};

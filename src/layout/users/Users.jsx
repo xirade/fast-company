@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
 // api
@@ -30,7 +30,8 @@ export default function Users() {
     const pageSize = 8;
 
     const { userId } = useParams();
-    //search query
+
+    // search query
     const [searchQuery, setSearchQuery] = useState("");
     const filteredSearchUsers =
         users &&
@@ -102,9 +103,9 @@ export default function Users() {
             prevState.map((state) =>
                 state._id === id
                     ? {
-                          ...state,
-                          isFavorite: favorite
-                      }
+                        ...state,
+                        isFavorite: favorite
+                    }
                     : state
             )
         );
@@ -126,8 +127,8 @@ export default function Users() {
     if (users) {
         const filteredUsers = selectedProf
             ? users.filter((user) => {
-                  return user.profession.name === selectedProf.name;
-              })
+                return user.profession.name === selectedProf.name;
+            })
             : filteredSearchUsers;
 
         const sortedUsers = orderBy(
@@ -142,59 +143,63 @@ export default function Users() {
             setSelectedProf();
         };
 
-        return userId ? (
-            <UserCard id={userId} {...{ renderBadges }} users={userCrop} />
-        ) : (
-            <div className="w-100 d-flex flex-column flex-lg-row justify-center">
-                {professions ? (
-                    <>
-                        <div className="d-flex flex-column p-3">
-                            <GroupList
-                                selectedItem={selectedProf}
-                                items={professions}
-                                onItemSelect={handleProfessionSelect}
-                            />
-                            <button
-                                className="btn btn-secondary mt-2"
-                                onClick={() => clearFilter()}
-                            >
-                                Очистить
-                            </button>
-                        </div>
-                        <div className="d-flex flex-column flex-fill">
-                            <SearchStatus
-                                phrase={renderPhrase}
-                                length={count}
-                            />
-                            <SearchInput {...{ searchQuery, changeHandler }} />
-                            <div style={{minHeight: "590px"}}>
-                                <UsersTable
-                                    onSort={handleSort}
-                                    selectedSort={sortBy}
-                                    users={userCrop}
-                                    onDelete={handleDelete}
-                                    onFavorite={handleFavorite}
-                                    renderBookmark={renderBookmark}
-                                    renderBadges={renderBadges}
-                                />
+        return userId
+            ? (
+                <UserCard id={userId} {...{ renderBadges }} users={userCrop} />
+            )
+            : (
+                <div className="w-100 d-flex flex-column flex-lg-row justify-center">
+                    {professions
+                        ? (
+                            <>
+                                <div className="d-flex flex-column p-3">
+                                    <GroupList
+                                        selectedItem={selectedProf}
+                                        items={professions}
+                                        onItemSelect={handleProfessionSelect}
+                                    />
+                                    <button
+                                        className="btn btn-secondary mt-2"
+                                        onClick={() => clearFilter()}
+                                    >
+                                        Очистить
+                                    </button>
+                                </div>
+                                <div className="d-flex flex-column flex-fill">
+                                    <SearchStatus
+                                        phrase={renderPhrase}
+                                        length={count}
+                                    />
+                                    <SearchInput {...{ searchQuery, changeHandler }} />
+                                    <div style={{ minHeight: "590px" }}>
+                                        <UsersTable
+                                            onSort={handleSort}
+                                            selectedSort={sortBy}
+                                            users={userCrop}
+                                            onDelete={handleDelete}
+                                            onFavorite={handleFavorite}
+                                            renderBookmark={renderBookmark}
+                                            renderBadges={renderBadges}
+                                        />
+                                    </div>
+                                    <div className="d-flex justify-content-center">
+                                        <Pagination
+                                            itemsCount={count}
+                                            pageSize={pageSize}
+                                            currentPage={currentPage}
+                                            onPageChange={handleChange}
+                                        />
+                                    </div>
+                                </div>
+                            </>
+                        )
+                        : (
+                            <div className="d-flex flex-column">
+                                <SearchStatus phrase={renderPhrase} length={count} />
                             </div>
-                            <div className="d-flex justify-content-center">
-                                <Pagination
-                                    itemsCount={count}
-                                    pageSize={pageSize}
-                                    currentPage={currentPage}
-                                    onPageChange={handleChange}
-                                />
-                            </div>
-                        </div>
-                    </>
-                ) : (
-                    <div className="d-flex flex-column">
-                        <SearchStatus phrase={renderPhrase} length={count} />
-                    </div>
-                )}
-            </div>
-        );
+                        )}
+                </div>
+            );
     }
     return <Loader />;
 }

@@ -33,7 +33,10 @@ export default function UserCard({ id, renderBadges }) {
                                         className="img-thumbnail min-w"
                                         src={user.img}
                                         alt="people"
-                                        style={{minWidth: "250px", minHeight: "200px"}}
+                                        style={{
+                                            minWidth: "250px",
+                                            minHeight: "200px"
+                                        }}
                                     />
                                 </div>
                                 <div className="d-flex flex-column ms-3 w-100">
