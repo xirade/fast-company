@@ -12,7 +12,7 @@ export default function Pagination({
     const pages = range(1, pageCount + 1);
     return (
         <>
-            {pageCount !== 1 && (
+            {pageCount !== 0 && (
                 <nav>
                     <ul className="pagination">
                         {pages.map((page) => (
