@@ -1,12 +1,12 @@
 import React from "react";
-import Qualities from "../qualities/Qualities";
+import Quality from "./Quality";
 import PropTypes from "prop-types";
 
 export default function QualitiesList({ qualities, renderBadges }) {
     return (
         <>
             {qualities.map((qual) => (
-                <Qualities key={qual._id} {...{ qual, renderBadges }} />
+                <Quality key={qual._id} {...{ qual, renderBadges }} />
             ))}
         </>
     );

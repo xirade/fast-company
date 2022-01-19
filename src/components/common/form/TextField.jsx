@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import PropTypes from "prop-types";
 
 // icons
-import Eye from "../../assets/eye.svg";
-import SlashEye from "../../assets/eye-slash.svg";
+import Eye from "../../../assets/eye.svg";
+import SlashEye from "../../../assets/eye-slash.svg";
 
 export default function TextField({
     label,
@@ -30,7 +30,7 @@ export default function TextField({
                     type={showPassword ? "text" : type}
                     id={name}
                     name={name}
-                    onChange={onChange}
+                    onChange={(e) => onChange(e.target)}
                     value={value}
                 />
                 {type === "password" && (
@@ -56,10 +56,10 @@ TextField.defaultProps = {
 };
 
 TextField.propTypes = {
-    label: PropTypes.string.isRequired,
-    type: PropTypes.string.isRequired,
-    name: PropTypes.string.isRequired,
-    value: PropTypes.string.isRequired,
-    onChange: PropTypes.func.isRequired,
+    label: PropTypes.string,
+    type: PropTypes.string,
+    name: PropTypes.string,
+    value: PropTypes.string,
+    onChange: PropTypes.func,
     error: PropTypes.string
 };

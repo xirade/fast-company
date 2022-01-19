@@ -1,14 +1,12 @@
 import React from "react";
 import PropTypes from "prop-types";
-import TableHeader from "./TableHeader";
-import TableBody from "./TableBody";
-import Bookmark from "../bookmark/Bookmark";
+import Bookmark from "../common/Bookmark";
+import Table, { TableHeader, TableBody } from "../common/table";
+import Qualities from "./qualities";
 
 // caret icons
 import caretUp from "../../assets/arrow_drop_up.svg";
 import caretDown from "../../assets/arrow_drop_down.svg";
-import QualitiesList from "../list/QualitiesList";
-import Table from "./Table";
 
 export default function UsersTable({
     users,
@@ -24,7 +22,7 @@ export default function UsersTable({
         qualities: {
             name: "Качества",
             component: (user) => (
-                <QualitiesList
+                <Qualities
                     {...{ renderBadges }}
                     qualities={user.qualities}
                 />

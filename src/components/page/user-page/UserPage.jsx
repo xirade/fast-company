@@ -3,22 +3,24 @@ import { useHistory } from "react-router-dom";
 import PropTypes from "prop-types";
 
 // api
-import api from "../../api/index";
+import api from "../../../api/index";
 
 // components
-import QualitiesList from "../list/QualitiesList";
-import Loader from "../loader/Loader";
+import QualitiesList from "../../ui/qualities/QualitiesList";
+import Loader from "../../common/Loader";
 
 export default function UserCard({ id, renderBadges }) {
     const history = useHistory();
     const [user, setUser] = useState(null);
 
     useEffect(() => {
-        api.users.getById(id).then((user) => setUser(user));
+        let isSub = true;
+        api.users.getById(id).then((user) => (isSub ? setUser(user) : null));
+        return () => (isSub = false);
     }, [id]);
 
     const handleRedirect = () => {
-        history.push("/users");
+        history.push(`/users/${id}/edit`);
     };
 
     if (user) {
@@ -70,7 +72,7 @@ export default function UserCard({ id, renderBadges }) {
                                             onClick={() => handleRedirect()}
                                             className="btn btn-outline-primary"
                                         >
-                                            Все пользователи
+                                            Изменить
                                         </button>
                                     </div>
                                 </div>

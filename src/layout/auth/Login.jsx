@@ -1,94 +1,64 @@
 import React, { useEffect, useState } from "react";
-import TextField from "src/components/inputs/TextField";
-import validator from "../../utils/validator";
+import { useParams } from "react-router";
+import api from "../../api";
+import Loader from "src/components/common/Loader";
 
+import LoginForm from "src/components/ui/LoginForm";
+import RegisterForm from "src/components/ui/RegisterForm";
 export default function Login() {
-    const [user, setUser] = useState({ email: "", password: "" });
-    const [errors, setErrors] = useState({});
+    const { type } = useParams();
+    const [formType, setFormType] = useState(
+        type === "register" ? type : "login"
+    );
 
-    const validatorConfig = {
-        email: {
-            isRequired: { message: "email is required" },
-            isEmail: { message: "invalid email formats" }
-        },
-        password: {
-            isRequired: { message: "password is required" },
-            isCapitalSymbol: {
-                message:
-                    "the password must contain at least one uppercase letter"
-            },
-            isContainDigit: {
-                message: "the password must contain at least one number"
-            },
-            min: {
-                message: "passwords must be at least 8 characters long",
-                value: 8
-            },
-            max: {
-                message: "passwords must be up to 15 characters long",
-                value: 15
-            }
-        }
-    };
+    const [professions, setProfessions] = useState(null);
+    const [qualities, setQuelities] = useState(null);
 
-    const validate = () => {
-        const errs = validator(user, validatorConfig);
-        setErrors(errs);
-        return Object.keys(errs).length === 0;
+    const toggleFormType = () => {
+        setFormType((prevState) =>
+            prevState === "register" ? "login" : "register"
+        );
     };
-    // check if inputs form is valid
-    const isValid = Object.keys(errors).length === 0;
 
     useEffect(() => {
-        validate();
-    }, [user]);
+        let isSub = true;
+        api.professions
+            .fetchAll()
+            .then((data) => (isSub ? setProfessions(data) : null));
+        api.qualities.fetchAll().then((data) =>
+            isSub
+                ? setQuelities(
+                    Object.keys({ ...data }).map((quality) => {
+                        return {
+                            label: data[quality].name,
+                            value: data[quality]._id
+                        };
+                    })
+                )
+                : null
+        );
 
-    const handleChange = (event) => {
-        const { name, value } = event.target;
-
-        setUser((prevState) => ({
-            ...prevState,
-            [name]: value
-        }));
-    };
-
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        const isValid = validate();
-        if (!isValid) return;
-        console.log(user);
-        setUser({ email: "", password: "" });
-    };
+        return () => (isSub = false);
+    }, []);
 
     return (
         <div className="container mt-5">
             <div className="row">
-                <div className="col-lg-6 col-md-8 offset-md-3 shadow p-4">
-                    <h3 className="mb-3">Login</h3>
-                    <form onSubmit={handleSubmit}>
-                        <TextField
-                            label={"Email"}
-                            name="email"
-                            value={user.email}
-                            onChange={handleChange}
-                            error={errors.email}
+                {formType === "register" ? (
+                    professions && qualities ? (
+                        <RegisterForm
+                            toggleFormType={toggleFormType}
+                            professions={professions}
+                            qualities={qualities}
                         />
-                        <TextField
-                            label={"Password"}
-                            type="password"
-                            name="password"
-                            value={user.password}
-                            onChange={handleChange}
-                            error={errors.password}
-                        />
-                        <button
-                            className="btn btn-primary w-100 mx-auto"
-                            disabled={!isValid}
-                        >
-                            Submit
-                        </button>
-                    </form>
-                </div>
+                    ) : (
+                        <div className="mx-auto">
+                            <Loader />
+                        </div>
+                    )
+                ) : (
+                    <LoginForm toggleFormType={toggleFormType} />
+                )}
             </div>
         </div>
     );
