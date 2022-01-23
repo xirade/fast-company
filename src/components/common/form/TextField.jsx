@@ -5,13 +5,15 @@ import PropTypes from "prop-types";
 import Eye from "../../../assets/eye.svg";
 import SlashEye from "../../../assets/eye-slash.svg";
 
-export default function TextField({
+function TextField({
     label,
     type,
     name,
     value,
     onChange,
-    error
+    onKeyDown,
+    error,
+    autoFocus
 }) {
     const [showPassword, setShowPassword] = useState(false);
 
@@ -31,7 +33,9 @@ export default function TextField({
                     id={name}
                     name={name}
                     onChange={(e) => onChange(e.target)}
+                    onKeyDown={onKeyDown}
                     value={value}
+                    autoFocus={autoFocus}
                 />
                 {type === "password" && (
                     <button
@@ -61,5 +65,9 @@ TextField.propTypes = {
     name: PropTypes.string,
     value: PropTypes.string,
     onChange: PropTypes.func,
-    error: PropTypes.string
+    onKeyDown: PropTypes.func,
+    error: PropTypes.string,
+    autoFocus: PropTypes.bool
 };
+
+export default React.memo(TextField);

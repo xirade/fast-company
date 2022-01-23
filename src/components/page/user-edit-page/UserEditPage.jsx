@@ -74,7 +74,7 @@ export default function UserEditPage() {
                 user={user}
                 urlType={urlType}
             >
-                <TextField key="name_input" />
+                <TextField autoFocus key="name_input" />
                 <TextField key="email_input" />
                 <TextField key="image_input" />
                 <SelectedField key="select" />

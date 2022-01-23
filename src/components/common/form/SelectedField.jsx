@@ -1,8 +1,9 @@
 import React from "react";
 import PropTypes from "prop-types";
 
-export default function SelectedField({
+function SelectedField({
     onChange,
+    onKeyDown,
     defaultOption,
     value,
     options,
@@ -14,12 +15,6 @@ export default function SelectedField({
         return `form-select${error ? " is-invalid" : " is-valid"}`;
     };
 
-    const handleChange = ({ target }) => {
-        const { name, value, selectedIndex, childNodes } = target;
-        const currId = childNodes[selectedIndex].getAttribute("id");
-        onChange({ name, value: { _id: currId, name: value } });
-    };
-
     return (
         <div className="mb-4">
             <label htmlFor={name} className="form-label">
@@ -29,7 +24,18 @@ export default function SelectedField({
             <select
                 className={getInputClasses()}
                 name="profession"
-                onChange={handleChange}
+                onChange={({ target }) =>
+                    onChange({
+                        name: target.name,
+                        value: {
+                            _id: target.childNodes[
+                                target.selectedIndex
+                            ].getAttribute("id"),
+                            name: target.value
+                        }
+                    })
+                }
+                onKeyDown={onKeyDown}
                 value={!value ? defaultOption : value}
             >
                 <option disabled>{defaultOption}</option>
@@ -58,7 +64,10 @@ SelectedField.propTypes = {
     defaultOption: PropTypes.string,
     value: PropTypes.string,
     onChange: PropTypes.func,
+    onKeyDown: PropTypes.func,
     error: PropTypes.string,
     label: PropTypes.string,
     options: PropTypes.oneOfType([PropTypes.object, PropTypes.array])
 };
+
+export default React.memo(SelectedField);

@@ -3,7 +3,8 @@ import React, {
     useState,
     useEffect,
     cloneElement,
-    isValidElement
+    isValidElement,
+    useCallback
 } from "react";
 import PropTypes from "prop-types";
 import validator from "../../../utils/validator";
@@ -48,27 +49,42 @@ export default function Form({
             }
     );
     const [errors, setErrors] = useState({});
-    const validate = () => {
-        const errs = validator(data, validatorConfig);
-        setErrors(errs);
-        return Object.keys(errs).length === 0;
-    };
+    const validate = useCallback(
+        (data) => {
+            const errs = validator(data, validatorConfig);
+            setErrors(errs);
+            return Object.keys(errs).length === 0;
+        },
+        [validatorConfig, setErrors]
+    );
     // check if inputs form is valid
     const isValid = Object.keys(errors).length === 0;
 
     useEffect(() => {
-        validate();
+        validate(data);
     }, [data]);
 
-    const handleChange = ({ name, value }) => {
-        setData((prevState) => ({
-            ...prevState,
-            [name]: value
-        }));
-    };
+    const handleKeyDown = useCallback((event) => {
+        if (event.keyCode === 13) {
+            event.preventDefault();
+            const form = event.target.form;
+            const indexField = Array.prototype.indexOf.call(form, event.target);
+            form.elements[indexField + 1].focus();
+        }
+    }, []);
+
+    const handleChange = useCallback(
+        ({ name, value }) => {
+            setData((prevState) => ({
+                ...prevState,
+                [name]: value
+            }));
+        },
+        [setData]
+    );
     const handleSubmit = (e) => {
         e.preventDefault();
-        const isValid = validate();
+        const isValid = validate(data);
 
         if (!isValid) return;
         if (urlType === `/users/${userId}`) {
@@ -102,6 +118,7 @@ export default function Form({
             value: data.email,
             name: "email",
             onChange: handleChange,
+            onKeyDown: handleKeyDown,
             error: errors.email
         }),
         ".$name_input": () => ({
@@ -109,6 +126,7 @@ export default function Form({
             value: data.name,
             name: "name",
             onChange: handleChange,
+            onKeyDown: handleKeyDown,
             error: errors.name
         }),
         ".$password_input": () => ({
@@ -117,6 +135,7 @@ export default function Form({
             name: "password",
             type: "password",
             onChange: handleChange,
+            onKeyDown: handleKeyDown,
             error: errors.password
         }),
         ".$image_input": () => ({
@@ -124,6 +143,7 @@ export default function Form({
             value: data.img,
             name: "img",
             onChange: handleChange,
+            onKeyDown: handleKeyDown,
             error: errors.img
         }),
         ".$select": () => ({
@@ -132,13 +152,15 @@ export default function Form({
             options: professions,
             value: data.profession.name,
             onChange: handleChange,
+            onKeyDown: handleKeyDown,
             error: errors.profession
         }),
         ".$radio": () => ({
             label: "Sex",
             value: data.sex,
             name: "sex",
-            onChange: handleChange
+            onChange: handleChange,
+            onKeyDown: handleKeyDown
         }),
         ".$multiselect": () => ({
             label: "Choose your qualities",
@@ -150,18 +172,21 @@ export default function Form({
                 color: quality
             })),
             onChange: handleChange,
+            onKeyDown: handleKeyDown,
             error: errors.qualities
         }),
         ".$checkbox_license": () => ({
             name: "license",
             value: data.license,
             onChange: handleChange,
+            onKeyDown: handleKeyDown,
             error: errors.license
         }),
         ".$checkbox_stayOn": () => ({
             name: "stayOn",
             value: data.stayOn,
             onChange: handleChange,
+            onKeyDown: handleKeyDown,
             error: errors.stayOn
         })
     };
