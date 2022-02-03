@@ -129,6 +129,7 @@ function Form({
         );
 
         setData(initialData);
+        setErrors({});
     };
     // props for fields
     const collectionProps = getCollectionProps(
