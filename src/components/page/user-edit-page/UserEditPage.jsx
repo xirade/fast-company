@@ -9,6 +9,8 @@ import RadioField from "src/components/common/form/RadioField";
 import MultiSelect from "src/components/common/form/MultiSelect";
 import Loader from "src/components/common/Loader";
 import { useParams } from "react-router";
+import SubmitButton from "src/components/common/form/SubmitButton";
+import BackButton from "src/components/common/BackButton";
 
 export default function UserEditPage() {
     const { userId } = useParams();
@@ -60,28 +62,29 @@ export default function UserEditPage() {
         return () => (isSub = false);
     }, []);
 
-    // url for redirection
-    const urlType = `/users/${userId}`;
-
     return professions && qualities ? (
-        <div className="col-lg-6 col-md-8 offset-md-3 shadow p-4">
-            <h3 className="mb-3">Edit User</h3>
-            <Form
-                professions={professions}
-                qualities={qualities}
-                validatorConfig={validatorConfig}
-                userId={userId}
-                user={user}
-                urlType={urlType}
-            >
-                <TextField autoFocus key="name_input" />
-                <TextField key="email_input" />
-                <TextField key="image_input" />
-                <SelectedField key="select" />
-                <RadioField key="radio" />
-                <MultiSelect key="multiselect" />
-            </Form>
-        </div>
+        <>
+            <BackButton />
+            <div className="col-lg-6 col-md-8 offset-md-3 shadow p-4">
+                <h3 className="mb-3">Edit User</h3>
+                <Form
+                    professions={professions}
+                    qualities={qualities}
+                    validatorConfig={validatorConfig}
+                    userId={userId}
+                    user={user}
+                    actionType={"UPDATE_PROFILE"}
+                >
+                    <TextField autoFocus key="name_input" />
+                    <TextField key="email_input" />
+                    <TextField key="image_input" />
+                    <SelectedField key="select" />
+                    <RadioField key="radio" />
+                    <MultiSelect key="multiselect" />
+                    <SubmitButton key="submit_button" />
+                </Form>
+            </div>
+        </>
     ) : (
         <Loader />
     );

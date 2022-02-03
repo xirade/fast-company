@@ -4,6 +4,7 @@ import PropTypes from "prop-types";
 // icons
 import Eye from "../../../assets/eye.svg";
 import SlashEye from "../../../assets/eye-slash.svg";
+import debounce from "src/utils/debounce";
 
 function TextField({
     label,
@@ -21,6 +22,16 @@ function TextField({
         return `form-control${error ? " is-invalid" : " is-valid"}`;
     };
 
+    const handleChange = (text) => {
+        onChange(text);
+    };
+
+    const emitChange = (target) => {
+        const [name, value] = target;
+        handleChange({ name, value });
+    };
+    const optimisedHandleChange = debounce(emitChange, 500);
+
     const toggleShowPassword = () => setShowPassword((prevState) => !prevState);
 
     return (
@@ -32,9 +43,11 @@ function TextField({
                     type={showPassword ? "text" : type}
                     id={name}
                     name={name}
-                    onChange={(e) => onChange(e.target)}
+                    onChange={(e) =>
+                        optimisedHandleChange([e.target.name, e.target.value])
+                    }
                     onKeyDown={onKeyDown}
-                    value={value}
+                    defaultValue={value}
                     autoFocus={autoFocus}
                 />
                 {type === "password" && (

@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import CheckBoxField from "../common/form/CheckBoxField";
 import Form from "../common/form/Form";
 import TextField from "../common/form/TextField";
+import SubmitButton from "../common/form/SubmitButton";
 
 export default function LoginForm({ toggleFormType }) {
     const validatorConfig = {
@@ -38,6 +39,9 @@ export default function LoginForm({ toggleFormType }) {
                 <CheckBoxField key="checkbox_stayOn">
                     Stay logged in
                 </CheckBoxField>
+                <SubmitButton
+                    key="submit_button"
+                />
             </Form>
             <p className="mb-0">
                 Dont have an account?

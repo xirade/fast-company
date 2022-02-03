@@ -1,6 +1,7 @@
 import React, { useCallback } from "react";
 import PropTypes from "prop-types";
 import Select from "react-select";
+import debounce from "src/utils/debounce";
 
 function MultiSelect({
     options,
@@ -15,14 +16,21 @@ function MultiSelect({
         return `basic-multi-select${error ? " is-invalid" : " is-valid"}`;
     };
 
-    const handleChange = useCallback((currArr) => {
+    const handleChange = (target) => {
+        const [name, value] = target;
+        onChange({ name, value });
+    };
+
+    const emitChange = useCallback((currArr) => {
         const value = currArr.map((item, i) => ({
             _id: currArr[i].value,
             name: currArr[i].label,
             color: currArr[i].color
         }));
-        onChange({ name, value });
+        handleChange([name, value]);
     }, []);
+
+    const optimisedHandleChange = debounce(emitChange, 500);
 
     return (
         <div className="mb-4">
@@ -35,7 +43,7 @@ function MultiSelect({
                 className={getInputClasses()}
                 classNamePrefix="select"
                 name={name}
-                onChange={handleChange}
+                onChange={optimisedHandleChange}
                 onKeyDown={onKeyDown}
             />
             {error && <p className="invalid-feedback">{error}</p>}

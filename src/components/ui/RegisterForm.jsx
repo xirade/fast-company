@@ -7,6 +7,7 @@ import CheckBoxField from "../common/form/CheckBoxField";
 import Form from "../common/form/Form";
 import TextField from "../common/form/TextField";
 import Loader from "../common/Loader";
+import SubmitButton from "../common/form/SubmitButton";
 
 export default function RegisterForm({
     toggleFormType,
@@ -65,6 +66,7 @@ export default function RegisterForm({
                 <CheckBoxField key="checkbox_license">
                     Confirm <a href="#">license agreement</a>
                 </CheckBoxField>
+                <SubmitButton key="submit_button" />
             </Form>
             <p className="mb-0">
                 Already have account?

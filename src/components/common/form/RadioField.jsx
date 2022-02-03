@@ -17,7 +17,9 @@ function RadioField({ onChange, onKeyDown, options, value, name, label }) {
                         id={`${options[option].name}_${options[option].value}`}
                         checked={options[option].value === value}
                         value={options[option].value}
-                        onChange={(e) => onChange(e.target)}
+                        onChange={({ target }) =>
+                            onChange({ name: target.name, value: target.value })
+                        }
                         onKeyDown={onKeyDown}
                     />
                     <label

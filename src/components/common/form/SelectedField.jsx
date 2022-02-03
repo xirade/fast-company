@@ -23,7 +23,7 @@ function SelectedField({
 
             <select
                 className={getInputClasses()}
-                name="profession"
+                name={name}
                 onChange={({ target }) =>
                     onChange({
                         name: target.name,
@@ -44,7 +44,11 @@ function SelectedField({
                         <option
                             id={options[option]._id}
                             key={options[option]._id}
-                            value={options[option].profession}
+                            value={
+                                name === "profession"
+                                    ? options[option].profession
+                                    : options[option].name
+                            }
                         >
                             {options[option].name}
                         </option>
@@ -56,7 +60,10 @@ function SelectedField({
 }
 
 SelectedField.defaultProps = {
-    defaultOption: "Choose..."
+    defaultOption: "Choose...",
+    label: "Profession",
+    name: "profession",
+    value: ""
 };
 
 SelectedField.propTypes = {

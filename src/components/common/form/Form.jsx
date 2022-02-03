@@ -10,16 +10,34 @@ import PropTypes from "prop-types";
 import validator from "../../../utils/validator";
 import api from "../../../api";
 import { useHistory } from "react-router";
+import getCollectionProps from "src/utils/getCollectionProps";
 
-export default function Form({
+const initialData = {
+    email: "",
+    password: "",
+    name: "",
+    userName: "",
+    content: "",
+    profession: "",
+    img: "",
+    sex: "male",
+    qualities: [],
+    license: false,
+    stayOn: false
+};
+
+function Form({
     children,
     user,
     userId,
-    urlType,
+    delay,
+    actionType,
     buttonName,
+    updateComments,
     validatorConfig,
     qualities,
-    professions
+    professions,
+    selectName
 }) {
     const history = useHistory();
     const arrayChildren = Children.toArray(children);
@@ -29,6 +47,7 @@ export default function Form({
                 email: user.email,
                 password: user.password,
                 name: user.name,
+                content: user.content,
                 profession: user.profession,
                 img: user.img,
                 sex: user.sex,
@@ -36,17 +55,7 @@ export default function Form({
                 license: false,
                 stayOn: false
             }
-            : {
-                email: "",
-                password: "",
-                name: "",
-                profession: "",
-                img: "",
-                sex: "male",
-                qualities: [],
-                license: false,
-                stayOn: false
-            }
+            : initialData
     );
     const [errors, setErrors] = useState({});
     const validate = useCallback(
@@ -73,6 +82,7 @@ export default function Form({
         }
     }, []);
 
+    // optimization textfields with debounce
     const handleChange = useCallback(
         ({ name, value }) => {
             setData((prevState) => ({
@@ -82,12 +92,14 @@ export default function Form({
         },
         [setData]
     );
+
     const handleSubmit = (e) => {
         e.preventDefault();
         const isValid = validate(data);
 
         if (!isValid) return;
-        if (urlType === `/users/${userId}`) {
+        switch (actionType) {
+        case "UPDATE_PROFILE":
             api.users.update(userId, {
                 email: data.email,
                 name: data.name,
@@ -96,100 +108,40 @@ export default function Form({
                 profession: data.profession,
                 qualities: data.qualities
             });
+            history.push(`/users/${userId}`);
+            break;
+        case "SEND_COMMENT":
+            api.comments.add({
+                pageId: userId,
+                userId: data.userName._id,
+                content: data.content
+            }).then(comment => updateComments(comment));
+            break;
+
+        default:
+            break;
         }
 
-        setData({
-            email: "",
-            password: "",
-            name: "",
-            profession: "",
-            sex: "male",
-            img: "",
-            qualities: [],
-            license: false,
-            stayOn: false
-        });
-        history.push(urlType);
+        Array.from(document.querySelectorAll(".form-control")).forEach(
+            (input) => {
+                input.value = "";
+            }
+        );
+
+        setData(initialData);
     };
     // props for fields
-    const collectionProps = {
-        ".$email_input": () => ({
-            label: "Email",
-            value: data.email,
-            name: "email",
-            onChange: handleChange,
-            onKeyDown: handleKeyDown,
-            error: errors.email
-        }),
-        ".$name_input": () => ({
-            label: "Name",
-            value: data.name,
-            name: "name",
-            onChange: handleChange,
-            onKeyDown: handleKeyDown,
-            error: errors.name
-        }),
-        ".$password_input": () => ({
-            label: "Password",
-            value: data.password,
-            name: "password",
-            type: "password",
-            onChange: handleChange,
-            onKeyDown: handleKeyDown,
-            error: errors.password
-        }),
-        ".$image_input": () => ({
-            label: "Image",
-            value: data.img,
-            name: "img",
-            onChange: handleChange,
-            onKeyDown: handleKeyDown,
-            error: errors.img
-        }),
-        ".$select": () => ({
-            label: "Profession",
-            name: "profession",
-            options: professions,
-            value: data.profession.name,
-            onChange: handleChange,
-            onKeyDown: handleKeyDown,
-            error: errors.profession
-        }),
-        ".$radio": () => ({
-            label: "Sex",
-            value: data.sex,
-            name: "sex",
-            onChange: handleChange,
-            onKeyDown: handleKeyDown
-        }),
-        ".$multiselect": () => ({
-            label: "Choose your qualities",
-            name: "qualities",
-            options: qualities,
-            defaultValue: data.qualities.map((quality) => ({
-                value: quality._id,
-                label: quality.name,
-                color: quality
-            })),
-            onChange: handleChange,
-            onKeyDown: handleKeyDown,
-            error: errors.qualities
-        }),
-        ".$checkbox_license": () => ({
-            name: "license",
-            value: data.license,
-            onChange: handleChange,
-            onKeyDown: handleKeyDown,
-            error: errors.license
-        }),
-        ".$checkbox_stayOn": () => ({
-            name: "stayOn",
-            value: data.stayOn,
-            onChange: handleChange,
-            onKeyDown: handleKeyDown,
-            error: errors.stayOn
-        })
-    };
+    const collectionProps = getCollectionProps(
+        data,
+        selectName,
+        buttonName,
+        professions,
+        qualities,
+        isValid,
+        errors,
+        handleChange,
+        handleKeyDown
+    );
 
     // check validation of children & adding props
     const addPropsToElement = (element, props) => {
@@ -213,19 +165,13 @@ export default function Form({
                 const currProps = collectionProps[child.key]();
                 return addPropsToChildren(child, currProps);
             })}
-            <button
-                className="btn btn-primary w-100 mb-2 mx-auto"
-                disabled={!isValid}
-            >
-                {buttonName}
-            </button>
         </form>
     );
 }
 
 Form.defaultProps = {
     buttonName: "Submit",
-    urlType: "/login"
+    actionType: "LOGIN"
 };
 
 Form.propTypes = {
@@ -234,11 +180,16 @@ Form.propTypes = {
         PropTypes.node
     ]),
     buttonName: PropTypes.string.isRequired,
+    delay: PropTypes.number,
     validatorConfig: PropTypes.object.isRequired,
     professions: PropTypes.oneOfType([PropTypes.array, PropTypes.object]),
     qualities: PropTypes.oneOfType([PropTypes.array, PropTypes.object]),
     user: PropTypes.object,
     userId: PropTypes.string,
-    urlType: PropTypes.string,
-    type: PropTypes.string
+    actionType: PropTypes.string,
+    type: PropTypes.string,
+    selectName: PropTypes.string,
+    updateComments: PropTypes.func
 };
+
+export default React.memo(Form);
