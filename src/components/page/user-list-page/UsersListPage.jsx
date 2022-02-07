@@ -15,9 +15,10 @@ import UsersTable from "../../ui/UsersTable";
 import SearchInput from "../../ui/search/SearchInput";
 import SearchStatus from "../../ui/search/SearchStatus";
 import Loader from "../../common/Loader";
+import { useUser } from "src/hooks/useUsers";
 
 export default function UsersList({ renderBadges }) {
-    const [users, setUsers] = useState();
+    const { users } = useUser();
     const [currentPage, setCurrentPage] = useState(1);
     const [professions, setProfessions] = useState(null);
     const [selectedProf, setSelectedProf] = useState(null);
@@ -40,15 +41,6 @@ export default function UsersList({ renderBadges }) {
 
     useEffect(() => {
         let isSub = true;
-        api.users.fetchAll().then((data) =>
-            isSub
-                ? setUsers(
-                    data.map((user) => {
-                        return { ...user, isFavorite: false };
-                    })
-                )
-                : null
-        );
         api.professions
             .fetchAll()
             .then((data) => (isSub ? setProfessions(data) : null));
@@ -81,22 +73,24 @@ export default function UsersList({ renderBadges }) {
     };
 
     const handleDelete = (userId) => {
-        setUsers((prevState) =>
-            prevState.filter((user) => user._id !== userId)
-        );
+        // setUsers((prevState) =>
+        //     prevState.filter((user) => user._id !== userId)
+        // );
+        console.log(userId);
     };
 
     const handleFavorite = (favorite, id) => {
-        setUsers((prevState) =>
-            prevState.map((state) =>
-                state._id === id
-                    ? {
-                        ...state,
-                        isFavorite: favorite
-                    }
-                    : state
-            )
-        );
+        // setUsers((prevState) =>
+        //     prevState.map((state) =>
+        //         state._id === id
+        //             ? {
+        //                   ...state,
+        //                   isFavorite: favorite
+        //               }
+        //             : state
+        //     )
+        // );
+        console.log(favorite, id);
     };
 
     const handleProfessionSelect = (item) => {

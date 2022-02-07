@@ -5,7 +5,6 @@ export default function UserCard({
     userName,
     professionName,
     userRate,
-    userImg,
     onRedirect
 }) {
     return (
@@ -29,7 +28,12 @@ export default function UserCard({
                 </button>
                 <div className="d-flex flex-column align-items-center text-center position-relative">
                     <img
-                        src={userImg}
+                        src={`https://avatars.dicebear.com/api/avataaars/${(
+                            Math.random() + 1
+                        )
+                            .toString(36)
+                            .substring(7)}.svg`}
+                        alt="avatar"
                         className="rounded-circle img-thumbnail min-w"
                         style={{
                             minWidth: "200px",
@@ -59,8 +63,7 @@ export default function UserCard({
 
 UserCard.propTypes = {
     userName: PropTypes.string.isRequired,
-    professionName: PropTypes.string.isRequired,
+    professionName: PropTypes.string,
     userRate: PropTypes.number.isRequired,
-    userImg: PropTypes.string.isRequired,
     onRedirect: PropTypes.func.isRequired
 };

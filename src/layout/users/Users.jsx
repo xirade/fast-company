@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 
 import UserPage from "src/components/page/user-page";
 import UsersListPage from "src/components/page/user-list-page";
+import UserProvider from "src/hooks/useUsers";
 
 export default function Users() {
     const { userId } = useParams();
@@ -15,11 +16,13 @@ export default function Users() {
         );
     };
 
-    return userId
-        ? (
-            <UserPage id={userId} renderBadges={renderBadges} />
-        )
-        : (
-            <UsersListPage renderBadges={renderBadges} />
-        );
+    return (
+        <UserProvider>
+            {userId ? (
+                <UserPage id={userId} renderBadges={renderBadges} />
+            ) : (
+                <UsersListPage renderBadges={renderBadges} />
+            )}
+        </UserProvider>
+    );
 }

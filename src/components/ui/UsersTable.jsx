@@ -7,6 +7,7 @@ import Qualities from "./qualities";
 // caret icons
 import caretUp from "../../assets/arrow_drop_up.svg";
 import caretDown from "../../assets/arrow_drop_down.svg";
+import { Profession } from "./Profession";
 
 export default function UsersTable({
     users,
@@ -22,13 +23,13 @@ export default function UsersTable({
         qualities: {
             name: "Качества",
             component: (user) => (
-                <Qualities
-                    {...{ renderBadges }}
-                    qualities={user.qualities}
-                />
+                <Qualities {...{ renderBadges }} id={user.qualities} />
             )
         },
-        professions: { path: "profession.name", name: "Профессия" },
+        professions: {
+            name: "Профессия",
+            component: (user) => <Profession id={user.profession} />
+        },
         completedMeetings: {
             path: "completedMeetings",
             name: "Встретился(раз)"
