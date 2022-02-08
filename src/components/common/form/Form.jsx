@@ -30,8 +30,8 @@ function Form({
     children,
     user,
     userId,
-    delay,
     actionType,
+    submitMethod,
     buttonName,
     updateComments,
     validatorConfig,
@@ -39,6 +39,7 @@ function Form({
     professions,
     selectName
 }) {
+    const [body, setBody] = useState(null);
     const history = useHistory();
     const arrayChildren = Children.toArray(children);
     const [data, setData] = useState(
@@ -71,7 +72,19 @@ function Form({
 
     useEffect(() => {
         validate(data);
-    }, [data]);
+        if (body) {
+            const onSubmit = async () => {
+                try {
+                    await submitMethod(body);
+                    setBody(null);
+                    history.push(`/`);
+                } catch (error) {
+                    console.log(error);
+                }
+            };
+            onSubmit();
+        }
+    }, [data, body]);
 
     const handleKeyDown = useCallback((event) => {
         if (event.keyCode === 13) {
@@ -93,12 +106,26 @@ function Form({
         [setData]
     );
 
-    const handleSubmit = (e) => {
+    function handleSubmit(e) {
         e.preventDefault();
         const isValid = validate(data);
 
         if (!isValid) return;
         switch (actionType) {
+        case "LOGIN":
+            setBody({
+                email: data.email,
+                password: data.password
+            });
+            break;
+        case "REGISTER":
+            setBody({
+                email: data.email,
+                password: data.password,
+                profession: data.profession._id,
+                qualities: data.qualities
+            });
+            break;
         case "UPDATE_PROFILE":
             api.users.update(userId, {
                 email: data.email,
@@ -111,11 +138,13 @@ function Form({
             history.push(`/users/${userId}`);
             break;
         case "SEND_COMMENT":
-            api.comments.add({
-                pageId: userId,
-                userId: data.userName._id,
-                content: data.content
-            }).then(comment => updateComments(comment));
+            api.comments
+                .add({
+                    pageId: userId,
+                    userId: data.userName._id,
+                    content: data.content
+                })
+                .then((comment) => updateComments(comment));
             break;
 
         default:
@@ -130,7 +159,7 @@ function Form({
 
         setData(initialData);
         setErrors({});
-    };
+    }
     // props for fields
     const collectionProps = getCollectionProps(
         data,
@@ -172,7 +201,7 @@ function Form({
 
 Form.defaultProps = {
     buttonName: "Submit",
-    actionType: "LOGIN"
+    actionType: ""
 };
 
 Form.propTypes = {
@@ -181,13 +210,13 @@ Form.propTypes = {
         PropTypes.node
     ]),
     buttonName: PropTypes.string.isRequired,
-    delay: PropTypes.number,
     validatorConfig: PropTypes.object.isRequired,
     professions: PropTypes.oneOfType([PropTypes.array, PropTypes.object]),
     qualities: PropTypes.oneOfType([PropTypes.array, PropTypes.object]),
     user: PropTypes.object,
     userId: PropTypes.string,
     actionType: PropTypes.string,
+    submitMethod: PropTypes.func,
     type: PropTypes.string,
     selectName: PropTypes.string,
     updateComments: PropTypes.func

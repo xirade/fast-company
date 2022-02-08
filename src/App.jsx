@@ -12,24 +12,31 @@ import UsersEditPage from "./components/page/user-edit-page";
 import { ToastContainer } from "react-toastify";
 import ProfessionProvider from "./hooks/useProfession";
 import { QualitiesProvider } from "./hooks/useQualities";
+import AuthProvider from "./hooks/useAuth";
 
 export default function App() {
     return (
         <>
-            <BrowserRouter>
-                <Navbar />
-                <Route exact path="/" component={Home} />
-                <ProfessionProvider>
-                    <QualitiesProvider>
-                        <Route path="/login:type?" component={Login} />
-                        <Route exact path="/users/:userId?" component={Users} />
-                        <Route
-                            path="/users/:userId?/edit"
-                            component={UsersEditPage}
-                        />
-                    </QualitiesProvider>
-                </ProfessionProvider>
-            </BrowserRouter>
+            <AuthProvider>
+                <BrowserRouter>
+                    <Navbar />
+                    <Route exact path="/" component={Home} />
+                    <ProfessionProvider>
+                        <QualitiesProvider>
+                            <Route path="/login:type?" component={Login} />
+                            <Route
+                                exact
+                                path="/users/:userId?"
+                                component={Users}
+                            />
+                            <Route
+                                path="/users/:userId?/edit"
+                                component={UsersEditPage}
+                            />
+                        </QualitiesProvider>
+                    </ProfessionProvider>
+                </BrowserRouter>
+            </AuthProvider>
             <ToastContainer />
         </>
     );

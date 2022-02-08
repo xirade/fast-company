@@ -1,45 +1,31 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useParams } from "react-router";
-import api from "../../api";
 import Loader from "src/components/common/Loader";
 
 import LoginForm from "src/components/ui/LoginForm";
 import RegisterForm from "src/components/ui/RegisterForm";
+import { useProfession } from "src/hooks/useProfession";
+import { useQualities } from "src/hooks/useQualities";
 export default function Login() {
     const { type } = useParams();
     const [formType, setFormType] = useState(
         type === "register" ? type : "login"
     );
 
-    const [professions, setProfessions] = useState(null);
-    const [qualities, setQuelities] = useState(null);
+    const { professions } = useProfession();
+    const { qualities } = useQualities();
+    const qualitiesList = Object.keys({ ...qualities }).map((quality) => {
+        return {
+            label: qualities[quality].name,
+            value: qualities[quality]._id
+        };
+    });
 
     const toggleFormType = () => {
         setFormType((prevState) =>
             prevState === "register" ? "login" : "register"
         );
     };
-
-    useEffect(() => {
-        let isSub = true;
-        api.professions
-            .fetchAll()
-            .then((data) => (isSub ? setProfessions(data) : null));
-        api.qualities.fetchAll().then((data) =>
-            isSub
-                ? setQuelities(
-                    Object.keys({ ...data }).map((quality) => {
-                        return {
-                            label: data[quality].name,
-                            value: data[quality]._id
-                        };
-                    })
-                )
-                : null
-        );
-
-        return () => (isSub = false);
-    }, []);
 
     return (
         <div className="container mt-5">
@@ -49,7 +35,7 @@ export default function Login() {
                         <RegisterForm
                             toggleFormType={toggleFormType}
                             professions={professions}
-                            qualities={qualities}
+                            qualities={qualitiesList}
                         />
                     ) : (
                         <div className="mx-auto">

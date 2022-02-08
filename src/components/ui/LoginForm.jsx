@@ -4,6 +4,7 @@ import CheckBoxField from "../common/form/CheckBoxField";
 import Form from "../common/form/Form";
 import TextField from "../common/form/TextField";
 import SubmitButton from "../common/form/SubmitButton";
+import { useAuth } from "src/hooks/useAuth";
 
 export default function LoginForm({ toggleFormType }) {
     const validatorConfig = {
@@ -30,18 +31,22 @@ export default function LoginForm({ toggleFormType }) {
             }
         }
     };
+
+    const { signIn } = useAuth();
     return (
         <div className="col-lg-6 col-md-8 offset-md-3 shadow p-4">
             <h3 className="mb-3">Login</h3>
-            <Form validatorConfig={validatorConfig}>
+            <Form
+                actionType="LOGIN"
+                submitMethod={signIn}
+                validatorConfig={validatorConfig}
+            >
                 <TextField key="email_input" />
                 <TextField key="password_input" />
                 <CheckBoxField key="checkbox_stayOn">
                     Stay logged in
                 </CheckBoxField>
-                <SubmitButton
-                    key="submit_button"
-                />
+                <SubmitButton key="submit_button" />
             </Form>
             <p className="mb-0">
                 Dont have an account?

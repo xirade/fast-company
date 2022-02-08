@@ -1,11 +1,35 @@
 import axios from "axios";
 import { toast } from "react-toastify";
-import config from "../config/config.json";
+import configFile from "../config/config.json";
 
-axios.defaults.baseURL = config.apiEndpoint;
+const http = axios.create({
+    baseURL: configFile.apiEndpoint
+});
 
-axios.interceptors.response.use(
-    (res) => res,
+http.interceptors.request.use(
+    function (config) {
+        if (configFile.isFirebase) {
+            const containSlash = /\/$/gi.test(config.url);
+            config.url =
+                (containSlash ? config.url.slice(0, -1) : config.url) + ".json";
+        }
+        return config;
+    },
+    function (error) {
+        console.log(error);
+    }
+);
+
+http.interceptors.response.use(
+    (res) => {
+        if (configFile.isFirebase) {
+            const transformData = res.data
+                ? Object.keys(res.data).map((key) => ({ ...res.data[key] }))
+                : [];
+            res.data = { content: transformData };
+        }
+        return res;
+    },
     function (error) {
         const expectedErrors =
             error.response &&
@@ -14,15 +38,15 @@ axios.interceptors.response.use(
 
         if (!expectedErrors) {
             console.log(error);
-            toast.error("Somthing was wrong. Try it later");
+            toast.error("Something was wrong. Try it later");
         }
         return Promise.reject(error);
     }
 );
 const httpService = {
-    get: axios.get,
-    post: axios.post,
-    put: axios.put,
-    delete: axios.delete
+    get: http.get,
+    post: http.post,
+    put: http.put,
+    delete: http.delete
 };
 export default httpService;

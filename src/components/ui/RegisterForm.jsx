@@ -8,6 +8,7 @@ import Form from "../common/form/Form";
 import TextField from "../common/form/TextField";
 import Loader from "../common/Loader";
 import SubmitButton from "../common/form/SubmitButton";
+import { useAuth } from "src/hooks/useAuth";
 
 export default function RegisterForm({
     toggleFormType,
@@ -50,6 +51,8 @@ export default function RegisterForm({
             }
         }
     };
+
+    const { signUp } = useAuth();
     return professions && qualities ? (
         <div className="col-lg-6 col-md-8 offset-md-3 shadow p-4">
             <h3 className="mb-3">Register</h3>
@@ -57,6 +60,8 @@ export default function RegisterForm({
                 professions={professions}
                 qualities={qualities}
                 validatorConfig={validatorConfig}
+                submitMethod={signUp}
+                actionType="REGISTER"
             >
                 <TextField key="email_input" />
                 <TextField key="password_input" />
