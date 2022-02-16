@@ -15,7 +15,6 @@ export default function UsersTable({
     onFavorite,
     selectedSort,
     renderBookmark,
-    onDelete,
     renderBadges
 }) {
     const columns = {
@@ -45,17 +44,7 @@ export default function UsersTable({
                 />
             )
         },
-        rate: { path: "rate", name: "Оценка", maxRate: 5 },
-        delete: {
-            component: (user) => (
-                <button
-                    className="btn btn-danger"
-                    onClick={() => onDelete(user._id)}
-                >
-                    Delete
-                </button>
-            )
-        }
+        rate: { path: "rate", name: "Оценка", maxRate: 5 }
     };
 
     const renderCaret = (path) => {
@@ -85,6 +74,5 @@ UsersTable.propTypes = {
     selectedSort: PropTypes.object.isRequired,
     renderBookmark: PropTypes.func.isRequired,
     renderBadges: PropTypes.func.isRequired,
-    onDelete: PropTypes.func.isRequired,
     onFavorite: PropTypes.func.isRequired
 };

@@ -9,6 +9,7 @@ import UserCard from "../../../components/ui/cards/UserCard";
 import MeetingsCard from "src/components/ui/cards/MeetingsCard";
 import Comments from "src/components/ui/comments/Comments";
 import { useUser } from "src/hooks/useUsers";
+import CommentsProvider from "src/hooks/useComments";
 
 export default function UserPage({ id, renderBadges }) {
     const history = useHistory();
@@ -25,9 +26,8 @@ export default function UserPage({ id, renderBadges }) {
                 <div className="row shadow py-1 gutters-sm">
                     <div className="col-md-4 mb-3">
                         <UserCard
-                            userName={user.name}
                             professionName={user.profession.name}
-                            userRate={user.rate}
+                            user={user}
                             onRedirect={handleRedirect}
                         />
                         <QualitiesCard
@@ -39,7 +39,9 @@ export default function UserPage({ id, renderBadges }) {
                         />
                     </div>
                     <div className="col-md-8">
-                        <Comments users={users} />
+                        <CommentsProvider>
+                            <Comments users={users} />
+                        </CommentsProvider>
                     </div>
                 </div>
             </div>

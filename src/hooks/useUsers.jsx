@@ -3,6 +3,8 @@ import PropTypes from "prop-types";
 import userService from "src/services/userService";
 import { toast } from "react-toastify";
 import Loader from "src/components/common/Loader";
+import { useAuth } from "./useAuth";
+import { useParams } from "react-router";
 
 const UserContext = createContext();
 
@@ -13,8 +15,10 @@ export const useUser = () => {
 };
 
 const UserProvider = ({ children }) => {
+    const { currentUser } = useAuth();
+    const { userId } = useParams();
     const [users, setUsers] = useState([]);
-    const [isLoading, setIsLoading] = useState(true);
+    const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
 
     useEffect(() => {
@@ -23,15 +27,15 @@ const UserProvider = ({ children }) => {
             toast.error(error);
             setError(null);
         }
-    }, [error]);
+    }, [userId]);
 
     async function getUsers() {
         try {
             const { content } = await userService.fetchAll();
             setUsers(content);
             setIsLoading(false);
-        } catch (error) {
-            errorCatcher(error);
+        } catch (err) {
+            errorCatcher(err);
         }
     }
 
@@ -39,13 +43,30 @@ const UserProvider = ({ children }) => {
         return users.find((u) => u._id === id);
     };
 
-    function errorCatcher(error) {
-        const { message } = error;
-        console.log(message);
+    async function updateProfile(content) {
+        try {
+            const data = await userService.update(currentUser._id, content);
+            setUsers((prevState) => {
+                const itemIndex = prevState.findIndex(
+                    (item) => item._id === currentUser._id
+                );
+                if (itemIndex > -1) {
+                    prevState[itemIndex] = data;
+                }
+                return prevState;
+            });
+        } catch (err) {
+            errorCatcher(err);
+        }
+    }
+
+    function errorCatcher(err) {
+        const { message } = err;
+        setError(message);
         setIsLoading(false);
     }
     return (
-        <UserContext.Provider value={{ users, getUser }}>
+        <UserContext.Provider value={{ users, updateProfile, getUser }}>
             {!isLoading ? children : <Loader />}
         </UserContext.Provider>
     );

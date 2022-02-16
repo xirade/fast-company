@@ -20,6 +20,13 @@ export default function RegisterForm({
             isRequired: { message: "email is required" },
             isEmail: { message: "invalid email formats" }
         },
+        name: {
+            isRequired: { message: "name is required" },
+            min: {
+                message: "name must be at least 3 characters long",
+                value: 3
+            }
+        },
         password: {
             isRequired: { message: "password is required" },
             isCapitalSymbol: {
@@ -64,6 +71,7 @@ export default function RegisterForm({
                 actionType="REGISTER"
             >
                 <TextField key="email_input" />
+                <TextField key="name_input" />
                 <TextField key="password_input" />
                 <SelectedField key="select" />
                 <RadioField key="radio" />

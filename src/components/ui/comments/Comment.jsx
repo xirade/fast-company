@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import PropTypes from "prop-types";
-import api from "../../../api";
-import Loader from "src/components/common/Loader";
 
 // icons
 import X from "../../../assets/x.svg";
-import { displayDate } from "src/utils/displayData";
+import { displayDate } from "src/utils/displayDate";
+import { useUser } from "src/hooks/useUsers";
+import { useAuth } from "src/hooks/useAuth";
 
 const Comment = ({
     content,
@@ -14,40 +14,19 @@ const Comment = ({
     userId,
     onRemove
 }) => {
-    const [user, setUser] = useState();
-    const [isLoading, setIsLoading] = useState(false);
-
-    useEffect(() => {
-        let isSub = true;
-        setIsLoading(true);
-        api.users.getById(userId).then((data) => {
-            if (isSub) {
-                setUser(data);
-                setIsLoading(false);
-            } else {
-                return null;
-            }
-        });
-        return () => (isSub = false);
-    }, []);
+    const { currentUser } = useAuth();
+    const { getUser } = useUser();
+    const user = getUser(userId);
 
     const date = displayDate(created);
 
-    return isLoading ? (
-        <div className="p-5">
-            <Loader />
-        </div>
-    ) : (
+    return (
         <div className="bg-light card-body  mb-3">
             <div className="row">
                 <div className="col">
                     <div className="d-flex flex-start ">
                         <img
-                            src={`https://avatars.dicebear.com/api/avataaars/${(
-                                Math.random() + 1
-                            )
-                                .toString(36)
-                                .substring(7)}.svg`}
+                            src={user.image}
                             className="rounded-circle shadow-1-strong me-3"
                             alt="avatar"
                             width="65"
@@ -62,19 +41,21 @@ const Comment = ({
                                             - {date}
                                         </span>
                                     </p>
-                                    <button
-                                        onClick={() => onRemove(id)}
-                                        className="btn btn-sm text-primary d-flex align-items-center"
-                                    >
-                                        <img
-                                            style={{
-                                                height: "20px",
-                                                width: "20px"
-                                            }}
-                                            src={X}
-                                            alt="x"
-                                        />
-                                    </button>
+                                    {currentUser._id === userId && (
+                                        <button
+                                            onClick={() => onRemove(id)}
+                                            className="btn btn-sm text-primary d-flex align-items-center"
+                                        >
+                                            <img
+                                                style={{
+                                                    height: "20px",
+                                                    width: "20px"
+                                                }}
+                                                src={X}
+                                                alt="x"
+                                            />
+                                        </button>
+                                    )}
                                 </div>
                                 <p className="small mb-0">{content}</p>
                             </div>

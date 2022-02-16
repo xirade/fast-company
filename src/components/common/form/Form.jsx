@@ -8,9 +8,11 @@ import React, {
 } from "react";
 import PropTypes from "prop-types";
 import validator from "../../../utils/validator";
-import api from "../../../api";
-import { useHistory } from "react-router";
+import { useHistory } from "react-router-dom";
 import getCollectionProps from "src/utils/getCollectionProps";
+import { useAuth } from "src/hooks/useAuth";
+import { nanoid } from "nanoid";
+import { useProfession } from "src/hooks/useProfession";
 
 const initialData = {
     email: "",
@@ -19,7 +21,7 @@ const initialData = {
     userName: "",
     content: "",
     profession: "",
-    img: "",
+    image: "",
     sex: "male",
     qualities: [],
     license: false,
@@ -33,24 +35,24 @@ function Form({
     actionType,
     submitMethod,
     buttonName,
-    updateComments,
     validatorConfig,
     qualities,
     professions,
     selectName
 }) {
-    const [body, setBody] = useState(null);
+    const { getProfession } = useProfession();
     const history = useHistory();
+    const { currentUser, changeEmail } = useAuth();
     const arrayChildren = Children.toArray(children);
     const [data, setData] = useState(
         user
             ? {
                 email: user.email,
-                password: user.password,
+                password: user.password || "",
                 name: user.name,
-                content: user.content,
-                profession: user.profession,
-                img: user.img,
+                content: user.content || "",
+                profession: getProfession(user.profession),
+                image: user.image || "",
                 sex: user.sex,
                 qualities: user.qualities,
                 license: false,
@@ -72,19 +74,7 @@ function Form({
 
     useEffect(() => {
         validate(data);
-        if (body) {
-            const onSubmit = async () => {
-                try {
-                    await submitMethod(body);
-                    setBody(null);
-                    history.push(`/`);
-                } catch (error) {
-                    console.log(error);
-                }
-            };
-            onSubmit();
-        }
-    }, [data, body]);
+    }, [data]);
 
     const handleKeyDown = useCallback((event) => {
         if (event.keyCode === 13) {
@@ -113,40 +103,58 @@ function Form({
         if (!isValid) return;
         switch (actionType) {
         case "LOGIN":
-            setBody({
+            submitMethod({
                 email: data.email,
                 password: data.password
+            }).then(() => {
+                history.push(
+                    history.location.state
+                        ? history.location.state.from.pathname
+                        : "/"
+                );
             });
             break;
         case "REGISTER":
-            setBody({
+            submitMethod({
                 email: data.email,
+                name: data.name,
                 password: data.password,
                 profession: data.profession._id,
-                qualities: data.qualities
+                qualities: data.qualities,
+                license: data.license,
+                sex: data.sex
+            }).then(() => {
+                history.push(
+                    history.location.state
+                        ? history.location.state.from.pathname
+                        : "/"
+                );
             });
             break;
         case "UPDATE_PROFILE":
-            api.users.update(userId, {
+            submitMethod({
                 email: data.email,
                 name: data.name,
                 sex: data.sex,
-                img: data.img,
-                profession: data.profession,
+                image: data.image,
+                profession: data.profession._id,
                 qualities: data.qualities
+            }).then(() => {
+                if (data.email !== currentUser.email) {
+                    changeEmail(data.email);
+                }
+                history.push(`/users/${userId}`);
             });
-            history.push(`/users/${userId}`);
             break;
         case "SEND_COMMENT":
-            api.comments
-                .add({
-                    pageId: userId,
-                    userId: data.userName._id,
-                    content: data.content
-                })
-                .then((comment) => updateComments(comment));
+            submitMethod({
+                content: data.content,
+                pageId: userId,
+                userId: currentUser._id,
+                _id: nanoid(),
+                created_at: Date.now()
+            });
             break;
-
         default:
             break;
         }
@@ -218,8 +226,7 @@ Form.propTypes = {
     actionType: PropTypes.string,
     submitMethod: PropTypes.func,
     type: PropTypes.string,
-    selectName: PropTypes.string,
-    updateComments: PropTypes.func
+    selectName: PropTypes.string
 };
 
 export default React.memo(Form);

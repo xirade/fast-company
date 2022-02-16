@@ -13,30 +13,40 @@ import { ToastContainer } from "react-toastify";
 import ProfessionProvider from "./hooks/useProfession";
 import { QualitiesProvider } from "./hooks/useQualities";
 import AuthProvider from "./hooks/useAuth";
+import ProtectedRoute from "./components/common/ProtectedRoute";
+import Logout from "./layout/auth/Logout";
+import UserProvider from "./hooks/useUsers";
 
 export default function App() {
     return (
         <>
-            <AuthProvider>
-                <BrowserRouter>
+            <BrowserRouter>
+                <AuthProvider>
                     <Navbar />
                     <Route exact path="/" component={Home} />
-                    <ProfessionProvider>
-                        <QualitiesProvider>
-                            <Route path="/login:type?" component={Login} />
-                            <Route
-                                exact
-                                path="/users/:userId?"
-                                component={Users}
-                            />
-                            <Route
-                                path="/users/:userId?/edit"
-                                component={UsersEditPage}
-                            />
-                        </QualitiesProvider>
-                    </ProfessionProvider>
-                </BrowserRouter>
-            </AuthProvider>
+                    <UserProvider>
+                        <ProfessionProvider>
+                            <QualitiesProvider>
+                                <Route path="/login:type?" component={Login} />
+                                <Route
+                                    exact
+                                    path="/logout"
+                                    component={Logout}
+                                />
+                                <ProtectedRoute
+                                    exact
+                                    path="/users/:userId?"
+                                    component={Users}
+                                />
+                                <ProtectedRoute
+                                    path="/users/:userId?/edit"
+                                    component={UsersEditPage}
+                                />
+                            </QualitiesProvider>
+                        </ProfessionProvider>
+                    </UserProvider>
+                </AuthProvider>
+            </BrowserRouter>
             <ToastContainer />
         </>
     );

@@ -1,0 +1,16 @@
+.comment-enter {
+    opacity: 0;
+}
+.comment-enter-active {
+    opacity: 1;
+    transition: opacity 200ms ease-in;
+}
+
+.comment-exit {
+    opacity: 1;
+}
+.comment-exit-active {
+    display: none;
+    opacity: 0;
+    transition: opacity 200ms ease-in;
+}

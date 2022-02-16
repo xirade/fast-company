@@ -14,7 +14,6 @@ function SelectedField({
     const getInputClasses = () => {
         return `form-select${error ? " is-invalid" : " is-valid"}`;
     };
-
     return (
         <div className="mb-4">
             <label htmlFor={name} className="form-label">

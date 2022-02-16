@@ -6,7 +6,7 @@ import Loader from "src/components/common/Loader";
 
 export default function QualitiesList({ id, renderBadges }) {
     const { getQuality, isLoading } = useQualities();
-    const qualities = id.map((d) => getQuality(d));
+    const qualities = id.map((d) => getQuality(d._id));
     if (!isLoading) {
         return (
             <>

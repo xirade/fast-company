@@ -47,11 +47,11 @@ export default function getCollectionProps(
         }),
         ".$image_input": () => ({
             label: "Image",
-            value: data.img,
-            name: "img",
+            value: data.image,
+            name: "image",
             onChange: optimisedHandleChange,
             onKeyDown: handleKeyDown,
-            error: errors.img
+            error: errors.image
         }),
         ".$select": () => ({
             name: selectName,

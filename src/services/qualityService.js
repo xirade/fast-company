@@ -20,7 +20,7 @@ const qualityService = {
     },
     delete: async (id) => {
         const { data } = await httpService.delete(
-            qualityEndpoint + id + "asdas"
+            qualityEndpoint + id
         );
         return data;
     }

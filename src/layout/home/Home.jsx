@@ -16,7 +16,7 @@ export default function Home() {
                 <li>Progress: {progress}%</li>
                 {error && <li>Error: {error}</li>}
             </ul>
-            <button onClick={handleClick} className="btn btn-primary">
+            <button disabled onClick={handleClick} className="btn btn-primary">
                 Initialize
             </button>
         </div>

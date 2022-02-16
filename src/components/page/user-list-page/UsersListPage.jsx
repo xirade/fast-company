@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
-import api from "../../../api";
 import { orderBy } from "lodash";
 import paginate from "../../../utils/paginate";
 
@@ -16,11 +15,14 @@ import SearchInput from "../../ui/search/SearchInput";
 import SearchStatus from "../../ui/search/SearchStatus";
 import Loader from "../../common/Loader";
 import { useUser } from "src/hooks/useUsers";
+import { useProfession } from "src/hooks/useProfession";
+import { useAuth } from "src/hooks/useAuth";
 
 export default function UsersList({ renderBadges }) {
+    const { isLoading, professions } = useProfession();
     const { users } = useUser();
+    const { currentUser } = useAuth();
     const [currentPage, setCurrentPage] = useState(1);
-    const [professions, setProfessions] = useState(null);
     const [selectedProf, setSelectedProf] = useState(null);
     const [sortBy, setSortBy] = useState({ path: "name", order: "asc" });
     const pageSize = 8;
@@ -40,15 +42,10 @@ export default function UsersList({ renderBadges }) {
     };
 
     useEffect(() => {
-        let isSub = true;
-        api.professions
-            .fetchAll()
-            .then((data) => (isSub ? setProfessions(data) : null));
         setCurrentPage(1);
         if (searchQuery) {
             setSelectedProf(null);
         }
-        return () => (isSub = false);
     }, [searchQuery]);
 
     const renderPhrase = (number) => {
@@ -106,11 +103,16 @@ export default function UsersList({ renderBadges }) {
         setSortBy(item);
     };
     if (users) {
-        const filteredUsers = selectedProf
-            ? users.filter((user) => {
-                return user.profession.name === selectedProf.name;
-            })
-            : filteredSearchUsers;
+        const filterUsers = (data) => {
+            const filteredUsers = selectedProf
+                ? data.filter((user) => {
+                    return user.profession.name === selectedProf.name;
+                })
+                : filteredSearchUsers;
+            return filteredUsers.filter((u) => u._id !== currentUser._id);
+        };
+
+        const filteredUsers = filterUsers(users);
 
         const sortedUsers = orderBy(
             filteredUsers,
@@ -125,7 +127,7 @@ export default function UsersList({ renderBadges }) {
         };
         return (
             <div className="w-100 d-flex flex-column flex-lg-row justify-center">
-                {professions ? (
+                {professions && isLoading ? (
                     <>
                         <div className="d-flex flex-column p-3">
                             <GroupList

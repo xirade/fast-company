@@ -47,8 +47,7 @@ const add = (data) =>
             const comments = JSON.parse(localStorage.getItem("comments"));
             const newComment = {
                 ...data,
-                created_at: Date.now(),
-                _id: Math.random().toString(36).substr(2, 9)
+                created_at: Date.now()
             };
             comments.push(newComment);
             localStorage.setItem("comments", JSON.stringify(comments));
